@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('confrim_password')->nullable();
             $table->string('profile_image')->nullabel();
             $table->enum('user_role',['admin','user'])->default('user');
-
             $table->rememberToken();
             $table->timestamps();
         });
