@@ -14,7 +14,7 @@ class ApiPostController extends Controller
     public function index()
     {
         //
-        return response()->json();
+        return response()->json(Post::all());
     }
 
     /**
@@ -28,9 +28,11 @@ class ApiPostController extends Controller
             'description'=>'required',
             'like_count'=>'required|numeric|min:1',
             'images'=>'required',
-            'images.*'=>'files|mimes:jpeg,png,|max:512'
+            'images.*'=>'file|mimes:jpeg,png,'
 
         ]);
+        // return response()->json($request);
+
          if ($request->hasFile('images')) {
             foreach ($request->file('images') as $key => $image) {
             $newName = time() . '_' . $key . '.' . $image->getClientOriginalExtension();
@@ -40,7 +42,7 @@ class ApiPostController extends Controller
                 'title'=>$request->title,
                 'description'=>$request->description,
                 'like_count'=>$request->like_count,
-                'images'=>$request->images,
+                'images'=>$newName,
         ]);
     }
 }
