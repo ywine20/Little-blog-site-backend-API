@@ -2,7 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiLikeController;
 use App\Http\Controllers\ApiPostController;
+use App\Http\Controllers\ApiCommentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +22,5 @@ use App\Http\Controllers\ApiPostController;
 //     return $request->user();
 // });
 Route::apiResource(name:'posts',controller:ApiPostController::class);
+Route::apiResource(name:'likes',controller:ApiLikeController::class);
+Route::apiResource(name:'comments',controller:ApiCommentController::class);

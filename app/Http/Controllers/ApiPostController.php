@@ -46,7 +46,11 @@ class ApiPostController extends Controller
         ]);
     }
 }
-   return response()->json(['massage'=>'succcessfully'],status:200);
+    if (isset($post)) {
+        return response()->json(['message' => ' stored successfully'], 200);
+    } else {
+        return response()->json(['message' => ' storage failed'], 500);
+    }
 }
 
     /**
@@ -59,8 +63,7 @@ class ApiPostController extends Controller
         if(is_null($post)){
             return response()->json(['message' => 'post is not found'],status:404);
         }
-        return response()->json($post);
-
+        return $post;
     }
 
     /**
@@ -69,6 +72,31 @@ class ApiPostController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $request->validate([
+            'title'=>'required|min:3|max:50',
+            'description'=>'required',
+            'like_count'=>'required|numeric|min:1',
+            'images'=>'required',
+            'images.*'=>'file|mimes:jpeg,png,'
+
+        ]);
+        // return $request;
+         $post=Post::find($id);
+        if(is_null($post)){
+            return response()->json(['message' => 'post is not found'],status:404);
+        }
+
+         if($request->has('title')){
+             $post->title=$post->title;
+        }
+         if($request->has('description')){
+             $post->description=$post->description;
+        }
+         if($request->has('like_count')){
+             $post->like_count=$post->like_count;
+        }
+        $post->update();
+        return response()->json($post);
     }
 
     /**
@@ -77,5 +105,11 @@ class ApiPostController extends Controller
     public function destroy(string $id)
     {
         //
+         $post=Post::find($id);
+        if(is_null($post)){
+            return response()->json(['message' => 'post is not found'],status:404);
+        }
+        $post->delete();
+        return response()->json(['masage'=>' Post is not delete'],status:204);
     }
 }
