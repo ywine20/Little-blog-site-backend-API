@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-class ApiAdminController extends Controller
+class ApiShareController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,10 +27,21 @@ class ApiAdminController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
-        if (is_null($user)) {
-            return response()->json(['message' => 'User is not found'],status:404);
-        };
+  $post = Post::find($id);
+
+if (is_null($post)) {
+    return response()->json(['message' => 'Post not found'], 404);
+}
+
+$data = [
+    'title' => $post->title ?? '',
+    'description' => $post->description ?? '',
+    'image' => $post->image ?? '',
+    'like_count' => $post->like_count ?? 0
+];
+
+return response()->json($data);
+
     }
 
     /**

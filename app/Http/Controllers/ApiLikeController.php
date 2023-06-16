@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Like;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
 class ApiLikeController extends Controller
@@ -22,17 +23,29 @@ class ApiLikeController extends Controller
     public function store(Request $request)
     {
 
-         $request->validate([
-
-        'likes'=>'nullable|numeric|min:1'
-
+            $request->validate([
+            'comment_id' => 'required|exists:comments,id',
+            'user_id' => 'required|exists:users,id',
         ]);
-         $like= Like::create([
-            'likes'=>$request->likes,
-        ]);
-        return response()->json(['massage'=>'succcessfully'],status:200);
 
+        $like = Like::firstOrNew([
+            'comment_id' => $request->comment_id,
+            'user_id' => $request->user_id,
+        ]);
+
+        $like->likes = $like->likes ? 0 : 1; // Toggle the likes between 0 and 1
+
+        $like->save();
+
+        // Update the like_count field in the associated comment
+        $comment = Comment::findOrFail($request->comment_id);
+        $comment->like_count = $comment->likes()->sum('likes');
+        $comment->save();
+
+        return response()->json(['message' => 'Like stored successfully'], 200);
     }
+
+
 
     /**
      * Display the specified resource.

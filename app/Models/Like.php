@@ -11,4 +11,15 @@ class Like extends Model
      protected $fillable = [
         'likes'
     ];
+    
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
+

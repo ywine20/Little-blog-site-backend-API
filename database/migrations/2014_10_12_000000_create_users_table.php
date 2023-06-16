@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('confrim_password')->nullable();
-            $table->string('profile_image')->nullabel();
+            $table->string('profile_image')->nullable();
             $table->enum('user_role',['admin','user'])->default('user');
             $table->rememberToken();
             $table->timestamps();
