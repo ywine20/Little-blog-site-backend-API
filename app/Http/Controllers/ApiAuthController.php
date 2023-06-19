@@ -20,21 +20,27 @@ class ApiAuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'confirm_password' => 'same:password',
-            'profile_image'=>'nullable',
+            'profile_image'=>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        $user = User::create([
+
+         $profileImagePath = null;
+    if ($request->hasFile('profile_image')) {
+        $pfname = uniqid() . '_' . $image->getClientOriginalName();
+        $profileImagePath = $request->file('profile_image')->storeAs('public/images/postimg',$pfname);
+    }
+        // return $request;
+         $user = User::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'profile_image'=>$request->profile_image,
+            'profile_image'=>$profileImagePath->profile_image,
             'password' => bcrypt($request->password) ,
         ]);
-        // return $request;
 
-        $token = Auth::user()->createToken('phone')->plainTextToken;
-        if(Auth::attempt($request->only(['email','password']))){
-        }
+         if(Auth::attempt($request->only(['email','password']))){
+            $token = Auth::user()->createToken('phone')->plainTextToken;
             return response()->json($token);
+        }
         return response()->json(['message' => 'user not found'],status:403);
     }
 
