@@ -20,20 +20,14 @@ class ApiAuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'confirm_password' => 'same:password',
-            'profile_image'=>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_image'=>'nullable',
         ]);
-
-         $profileImagePath = null;
-    if ($request->hasFile('profile_image')) {
-        $pfname = uniqid() . '_' . $image->getClientOriginalName();
-        $profileImagePath = $request->file('profile_image')->storeAs('public/images/postimg',$pfname);
-    }
         // return $request;
          $user = User::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'profile_image'=>$profileImagePath->profile_image,
+            'profile_image'=>$request->profile_image,
             'password' => bcrypt($request->password) ,
         ]);
 

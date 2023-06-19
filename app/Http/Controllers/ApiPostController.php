@@ -18,17 +18,9 @@ class ApiPostController extends Controller
     {
         //
 
-      $posts = Post::with('images.likes')->get();
-
-    foreach ($posts as $post) {
-        $post->like_count = $post->like_count + $post->images->sum(function ($image) {
-            return $image->likes->sum('likes');
-        });
+        return response()->json(Post::with('images')->get());
     }
 
-    return response()->json($posts);
-
-    
 
     /**
      * Store a newly created resource in storage.
@@ -40,7 +32,7 @@ class ApiPostController extends Controller
             'title'=>'required|min:3|max:50',
             'description'=>'required',
             'like_count'=>'required|numeric|min:1',
-            'images'=>'nullable',
+            'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 
         ]);
