@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Post;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class PostSeeder extends Seeder
 {
@@ -12,6 +13,10 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Post::create([
+            'title'=>'this is title',
+            'description'=>'this is description',
+            'like_count'=>1,
+        ]);
     }
 }

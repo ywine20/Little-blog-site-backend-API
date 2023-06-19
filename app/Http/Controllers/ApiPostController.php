@@ -16,7 +16,15 @@ class ApiPostController extends Controller
     public function index()
     {
         //
-        return response()->json(Post::with('images')->get());
+      $posts = Post::with('images.likes')->get();
+
+    foreach ($posts as $post) {
+        $post->like_count = $post->like_count + $post->images->sum(function ($image) {
+            return $image->likes->sum('likes');
+        });
+    }
+
+    return response()->json($posts);
     }
 
     /**
@@ -29,7 +37,7 @@ class ApiPostController extends Controller
             'title'=>'required|min:3|max:50',
             'description'=>'required',
             'like_count'=>'required|numeric|min:1',
-            'images'=>'required',
+            'images'=>'nullable',
             'images.*'=>'file|mimes:jpeg,png,'
 
         ]);
