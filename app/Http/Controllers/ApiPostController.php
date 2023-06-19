@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
+
 class ApiPostController extends Controller
 {
     /**
@@ -16,6 +17,7 @@ class ApiPostController extends Controller
     public function index()
     {
         //
+
       $posts = Post::with('images.likes')->get();
 
     foreach ($posts as $post) {
@@ -25,7 +27,8 @@ class ApiPostController extends Controller
     }
 
     return response()->json($posts);
-    }
+
+    
 
     /**
      * Store a newly created resource in storage.
@@ -41,6 +44,7 @@ class ApiPostController extends Controller
             'images.*'=>'file|mimes:jpeg,png,'
 
         ]);
+
         // return response()->json($request);
          $post= Post::create([
                 'title'=>$request->title,
@@ -65,6 +69,26 @@ class ApiPostController extends Controller
     } else {
         return response()->json(['message' => ' storage failed'], 500);
     }
+
+      // This is something changing
+
+        // return response()->json($request);
+
+         if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $key => $image) {
+            $newName = time() . '_' . $key . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public', $newName);
+
+                $post= Post::create([
+                'title'=>$request->title,
+                'description'=>$request->description,
+                'like_count'=>$request->like_count,
+                'images'=>$newName,
+        ]);
+    }
+}
+   return response()->json(['massage'=>'succcessfully'],status:200);
+
 }
 
     /**
@@ -77,8 +101,10 @@ class ApiPostController extends Controller
         if(is_null($post)){
             return response()->json(['message' => 'post is not found'],status:404);
         }
+
         $post->load('images');
         return response()->json($post);
+
     }
 
     /**
@@ -87,6 +113,7 @@ class ApiPostController extends Controller
     public function update(Request $request, string $id)
     {
         //
+
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
@@ -133,11 +160,13 @@ class ApiPostController extends Controller
     }
         $post->update();
         return response()->json($post);
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
+
    public function destroy(string $id)
 {
     $post = Post::find($id);
@@ -153,4 +182,5 @@ class ApiPostController extends Controller
     }
     return response()->json(['message' => 'Post and images deleted successfully'], 200);
 }
+
 }
