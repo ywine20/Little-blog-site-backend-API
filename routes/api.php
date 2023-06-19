@@ -40,5 +40,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::apiResource(name:'likes',controller:ApiLikeController::class);
     Route::apiResource(name:'comments',controller:ApiCommentController::class);
     Route::apiResource(name:'shares',controller:ApiShareController::class);
+    // Route::resource('likes', ApiLikeController::class);
+
 
     });

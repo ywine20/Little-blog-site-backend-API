@@ -137,15 +137,12 @@ class ApiPostController extends Controller
         return response()->json(['message' => 'Post not found'], 404);
     }
 
-
     $images = $post->images;
     $post->delete();
-
     foreach ($images as $image) {
         Storage::delete($image->image);
         $image->delete();
     }
-
     return response()->json(['message' => 'Post and images deleted successfully'], 200);
 }
 }

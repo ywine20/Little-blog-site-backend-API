@@ -22,19 +22,19 @@ class ApiAuthController extends Controller
             'confirm_password' => 'same:password',
             'profile_image'=>'nullable',
         ]);
-        // return $request;
-         $user = User::create([
+        $user = User::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
             'profile_image'=>$request->profile_image,
             'password' => bcrypt($request->password) ,
         ]);
+        // return $request;
 
-         if(Auth::attempt($request->only(['email','password']))){
-            $token = Auth::user()->createToken('phone')->plainTextToken;
-            return response()->json($token);
+        $token = Auth::user()->createToken('phone')->plainTextToken;
+        if(Auth::attempt($request->only(['email','password']))){
         }
+            return response()->json($token);
         return response()->json(['message' => 'user not found'],status:403);
     }
 
