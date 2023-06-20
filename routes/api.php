@@ -28,6 +28,7 @@ use App\Http\Controllers\ApiCommentController;
 Route::post('/register',[ApiAuthController::class,'register'])->name('api.register');
 Route::post('/login',[ApiAuthController::class,'login'])->name('api.login');
 // Route::get('/user/searchs',[ApiUserSearch::class,'filter'])->name('usersearchs');
+    Route::apiResource(name:'posts',controller:ApiPostController::class);
 
 
 Route::middleware('auth:sanctum')->group(function(){
@@ -36,11 +37,9 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/logout-all',[ApiAuthController::class,'logoutAll'])->name('api.logoutAll');
     Route::get('/tokens',[ApiAuthController::class,'tokens'])->name('api.tokens');
 
-    Route::apiResource(name:'posts',controller:ApiPostController::class);
     Route::apiResource(name:'likes',controller:ApiLikeController::class);
     Route::apiResource(name:'comments',controller:ApiCommentController::class);
     Route::apiResource(name:'shares',controller:ApiShareController::class);
-    // Route::resource('likes', ApiLikeController::class);
-
+  
 
     });

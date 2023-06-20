@@ -16,8 +16,16 @@ class ApiPostController extends Controller
     public function index()
     {
         //
-        return response()->json(Post::with('images')->get());
-    }
+        $posts = Post::with('images')->get();
+
+    // Remove the id and post_id fields from each post
+    $posts = $posts->map(function ($post) {
+        $post->makeHidden(['id', 'post_id']);
+        return $post;
+    });
+
+    return response()->json($posts);
+}
 
     /**
      * Store a newly created resource in storage.
