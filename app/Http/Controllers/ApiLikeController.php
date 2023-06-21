@@ -40,7 +40,7 @@ class ApiLikeController extends Controller
         $like = new Like();
         $like->user_id = $user->id;
         $like->post_id = $request->post_id;
-        $like->likes = 0; // Set a default value for the "likes" column
+        $like->likes=1; // Set a default value for the "likes" column
 
         if ($like->save()) {
             return response()->json([
