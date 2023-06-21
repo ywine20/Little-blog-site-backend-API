@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\PostImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ApiPostController extends Controller
@@ -32,11 +33,13 @@ class ApiPostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!auth()->user()->hasRole('admin')) {
+        return response()->json(['message' => 'You do not have permission to create a post'], 403);
+    }
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
-            'like_count'=>'required|numeric|min:1',
+            'like_count'=>'nullable|numeric|min:1',
             'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 
@@ -45,7 +48,7 @@ class ApiPostController extends Controller
          $post= Post::create([
                 'title'=>$request->title,
                 'description'=>$request->description,
-                'like_count'=>$request->like_count,
+                'like_count'=>0,
         ]);
 
         if ($request->hasFile('images')) {
@@ -90,7 +93,7 @@ class ApiPostController extends Controller
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
-            'like_count'=>'required|numeric|min:1',
+            'like_count'=>'nullable|numeric|min:1',
             'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 
@@ -107,9 +110,9 @@ class ApiPostController extends Controller
          if($request->has('description')){
              $post->description=$request->description;
         }
-        //  if($request->has('like_count')){
-        //      $post->like_count=$post->like_count;
-        // }
+         if($request->has('like_count')){
+             $post->like_count=$post->like_count;
+        }
 
         if ($request->has('deleted_images')) {
         $deletedImages = $request->input('deleted_images');
@@ -140,6 +143,9 @@ class ApiPostController extends Controller
      */
    public function destroy(string $id)
 {
+       if (!auth()->user()->hasRole('admin')) {
+        return response()->json(['message' => 'You do not have permission to delete a post'], 403);
+    }
     $post = Post::find($id);
     if (is_null($post)) {
         return response()->json(['message' => 'Post not found'], 404);
