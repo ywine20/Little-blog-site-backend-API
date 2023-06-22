@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Viewer extends Model
 {
-    protected $fillable = ['post_id', 'view_count'];
+    protected $fillable = [
+    'post_id',
+    'view_count'
+];
 
     public function post()
     {
