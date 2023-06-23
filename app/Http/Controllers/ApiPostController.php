@@ -38,10 +38,10 @@ class ApiPostController extends Controller
      */
     public function store(Request $request)
     {
-        //   if (!Auth::user()->hasRole('admin')) {
-        //     return response()->json(['message' => 'Unauthorized'], 401);
-        // }
-        $request->validate([
+          if (Auth::user()->user_role != "admin") {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }else{
+            $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
             'like_count'=>'nullable|numeric|min:0',
@@ -75,24 +75,29 @@ class ApiPostController extends Controller
         return response()->json(['message' => ' storage failed'], 500);
     }
 
+        }
+
+
+
+
       // This is something changing
 
         // return response()->json($request);
 
-         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $key => $image) {
-            $newName = time() . '_' . $key . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public', $newName);
+//          if ($request->hasFile('images')) {
+//             foreach ($request->file('images') as $key => $image) {
+//             $newName = time() . '_' . $key . '.' . $image->getClientOriginalExtension();
+//             $image->storeAs('public', $newName);
 
-                $post= Post::create([
-                'title'=>$request->title,
-                'description'=>$request->description,
-                'like_count'=>$request->like_count,
-                'images'=>$newName,
-        ]);
-    }
-}
-   return response()->json(['massage'=>'succcessfully'],status:200);
+//                 $post= Post::create([
+//                 'title'=>$request->title,
+//                 'description'=>$request->description,
+//                 'like_count'=>$request->like_count,
+//                 'images'=>$newName,
+//         ]);
+//     }
+// }
+//    return response()->json(['massage'=>'succcessfully'],status:200);
 
 }
 

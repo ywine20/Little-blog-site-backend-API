@@ -14,14 +14,21 @@ class UserSeeder extends Seeder
     public function run()
     {
         // Create admin user
-        $admin = User::create([
+        // $admin = User::create([
+        //     'name' => 'DigitalAdmin',
+        //     'email' => 'dgicadmin@mm.com',
+        //     'password' => bcrypt('password'),
+        // ]);
+
+        // // Assign admin role to the admin user
+        // $admin->assignRole('admin');
+
+        User::create([
             'name' => 'DigitalAdmin',
             'email' => 'dgicadmin@mm.com',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('password') ,
+            'user_role' => 'admin'
         ]);
-
-        // Assign admin role to the admin user
-        $admin->assignRole('admin');
 
         // Create regular user(s)
         // ...
