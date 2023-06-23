@@ -34,10 +34,10 @@ class ApiPostController extends Controller
      */
     public function store(Request $request)
     {
-        //   if (!Auth::user()->hasRole('admin')) {
+        //   if (Auth::user()->user_role != "admin") {
         //     return response()->json(['message' => 'Unauthorized'], 401);
         // }
-        $request->validate([
+            $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
             'like_count'=>'nullable|numeric|min:0',
@@ -69,6 +69,8 @@ class ApiPostController extends Controller
     } else {
         return response()->json(['message' => ' storage failed'], 500);
     }
+
+
 }
 
     /**
