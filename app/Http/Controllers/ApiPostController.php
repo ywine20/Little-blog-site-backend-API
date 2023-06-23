@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -18,8 +20,17 @@ class ApiPostController extends Controller
     {
         //
 
-        return response()->json(Post::with('images')->get());
-    }
+        $posts = Post::with('images','likes')->get();
+
+    // Remove the id and post_id fields from each post
+    $posts = $posts->map(function ($post) {
+        $post->makeHidden(['id', 'post_id']);
+        return $post;
+    });
+
+    return response()->json($posts);
+}
+
 
 
     /**
@@ -27,11 +38,13 @@ class ApiPostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //   if (!Auth::user()->hasRole('admin')) {
+        //     return response()->json(['message' => 'Unauthorized'], 401);
+        // }
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
-            'like_count'=>'required|numeric|min:1',
+            'like_count'=>'nullable|numeric|min:0',
             'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 
@@ -41,7 +54,7 @@ class ApiPostController extends Controller
          $post= Post::create([
                 'title'=>$request->title,
                 'description'=>$request->description,
-                'like_count'=>$request->like_count,
+                'like_count'=>$request->likes,
         ]);
 
         if ($request->hasFile('images')) {
@@ -109,7 +122,7 @@ class ApiPostController extends Controller
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
-            'like_count'=>'required|numeric|min:1',
+            'like_count'=>'nullable|numeric|min:0',
             'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 

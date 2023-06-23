@@ -11,13 +11,20 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    //  public function run(): void
-    // {
-    //     User::create([
-    //         'name' =>'wine paye',
-    //         'phone' => "0987654321",
-    //         'email' => 'ywine@gmail.com',
-    //         'password' => bcrypt("hello123456") ,
-    //     ]);
-    // }
+    public function run()
+    {
+        // Create admin user
+        $admin = User::create([
+            'name' => 'DigitalAdmin',
+            'email' => 'dgicadmin@mm.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        // Assign admin role to the admin user
+        $admin->assignRole('admin');
+
+        // Create regular user(s)
+        // ...
+    }
 }
+

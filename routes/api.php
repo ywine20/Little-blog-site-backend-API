@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ApiLikeController;
 use App\Http\Controllers\ApiPostController;
+use App\Http\Controllers\ApiViewerController;
 use App\Http\Controllers\ApiCommentController;
 
 
@@ -25,22 +26,24 @@ use App\Http\Controllers\ApiCommentController;
 //     return $request->user();
 // });
 
+
+//register out of auth
 Route::post('/register',[ApiAuthController::class,'register'])->name('api.register');
 Route::post('/login',[ApiAuthController::class,'login'])->name('api.login');
 // Route::get('/user/searchs',[ApiUserSearch::class,'filter'])->name('usersearchs');
 
-
+//login and other route in auth
 Route::middleware('auth:sanctum')->group(function(){
 
+    Route::post('/count-viewers', [ApiViewerController::class, 'count']);
     Route::get('/logout',[ApiAuthController::class,'logout'])->name('api.logout');
     Route::get('/logout-all',[ApiAuthController::class,'logoutAll'])->name('api.logoutAll');
     Route::get('/tokens',[ApiAuthController::class,'tokens'])->name('api.tokens');
 
+    Route::apiResource(name:'comments',controller:ApiCommentController::class);
     Route::apiResource(name:'posts',controller:ApiPostController::class);
     Route::apiResource(name:'likes',controller:ApiLikeController::class);
-    Route::apiResource(name:'comments',controller:ApiCommentController::class);
     Route::apiResource(name:'shares',controller:ApiShareController::class);
-    // Route::resource('likes', ApiLikeController::class);
 
 
     });

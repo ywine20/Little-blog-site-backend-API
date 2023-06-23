@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
-            $table->integer('like_count');
+            $table->integer('like_count')->nullable();
             $table->timestamps();
         });
     }

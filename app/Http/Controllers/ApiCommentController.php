@@ -29,22 +29,23 @@ class ApiCommentController extends Controller
      // Validation rules
            $request->validate([
             'post_id' => 'required|exists:posts,id',
-            'user_id' => 'required|exists:users,id',
-            'comments' => 'nullable',
+            // 'user_id' => 'required|exists:users,id',
+            'comments' => 'required|string|max:255',
         ]);
 
-        try {
-            // Create a new comment
-            $comment = Comment::create([
-                'post_id' => $request->post_id,
-                'user_id' => $request->user_id,
-                'comments' => $request->comments,
-            ]);
-
-            return response()->json(['message' => 'Comment stored successfully'], 200);
-        } catch (\Exception $e) {
-            // Handle any exceptions that may occur
-            return response()->json(['error' => $e->getMessage()], 500);
+        $comment = new Comment();
+$comment->post_id = $request->post_id;
+$comment->user_id = $request->user()->id;
+$comment->comments = $request->comments;
+        if ($comment->save()){
+            return response()->json([
+                'massage'=>'comment successfully',
+                'comment'=>$comment,
+            ],201);
+        }else{
+            return response()->json([
+                'massage'=>'some error , please try again'
+            ],200);
         }
  }
 
