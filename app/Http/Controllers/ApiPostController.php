@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostImage;
-use App\Models\Like;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ApiPostController extends Controller
@@ -33,11 +34,13 @@ class ApiPostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //   if (!Auth::user()->hasRole('admin')) {
+        //     return response()->json(['message' => 'Unauthorized'], 401);
+        // }
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
-            'like_count'=>'nullable|numeric|min:1',
+            'like_count'=>'nullable|numeric|min:0',
             'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 
@@ -91,7 +94,7 @@ class ApiPostController extends Controller
         $request->validate([
             'title'=>'required|min:3|max:50',
             'description'=>'required',
-            'like_count'=>'required|numeric|min:1',
+            'like_count'=>'nullable|numeric|min:0',
             'images'=>'required',
             'images.*'=>'file|mimes:jpeg,png,'
 

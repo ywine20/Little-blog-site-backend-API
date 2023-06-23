@@ -36,6 +36,10 @@ class ApiLikeController extends Controller
 
     if ($like) {
         $like->delete();
+         $likeCount = Like::where('post_id',$like->post_id)->count();
+        $post = Post::find($like->post_id);
+        $post->like_count = $likeCount;
+        $post->save();
         return response()->json([
             'message' => 'You unliked the post',
         ], 200);
@@ -54,18 +58,6 @@ class ApiLikeController extends Controller
                 'message' => 'You liked the post',
                 'like' => $like
             ], 201);
-
-
-        // // Check if there is an existing like by another user for the same post
-        // $existingLike = Like::where('post_id', $request->post_id)->first();
-        // if ($existingLike) {
-        //     $existingLike->likes += 1; // Increment the like count
-        //     $existingLike->save();
-        //     return response()->json([
-        //         'message' => 'You liked the post',
-        //         'like' => $existingLike
-        //     ], 201);
-        // }
 
           if ($like->save()) {
             return response()->json([
