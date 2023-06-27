@@ -13,6 +13,7 @@ class Post extends Model
       'title',
       'description',
       'like_count',
+      'view_count',
     ];
 
     public function comments()
