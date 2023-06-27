@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\PostImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,14 +20,15 @@ class ApiPostController extends Controller
     {
         //
         $posts = Post::with('images','likes')->get();
+        return PostResource::collection($posts);
 
     // Remove the id and post_id fields from each post
-    $posts = $posts->map(function ($post) {
-        $post->makeHidden(['id', 'post_id']);
-        return $post;
-    });
+    // $posts = $posts->map(function ($post) {
+    //     $post->makeHidden(['id', 'post_id']);
+    //     return $post;
+    // });
 
-    return response()->json($posts);
+    // return response()->json($posts);
 }
 
     /**
@@ -71,8 +73,6 @@ class ApiPostController extends Controller
     }
         }
 
-
-
 }
 
     /**
@@ -86,7 +86,8 @@ class ApiPostController extends Controller
             return response()->json(['message' => 'post is not found'],status:404);
         }
         $post->load('images');
-        return response()->json($post);
+        // return response()->json($post);
+        return new PostResource($post);
     }
 
     /**
@@ -140,7 +141,8 @@ class ApiPostController extends Controller
         }
     }
         $post->update();
-        return response()->json($post);
+        // return response()->json($post);
+         return new PostResource($post);
     }
 
     /**

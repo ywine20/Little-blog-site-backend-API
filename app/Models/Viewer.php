@@ -8,7 +8,7 @@ class Viewer extends Model
 {
     protected $fillable = [
     'post_id',
-    'view_count'
+    'visitor',
 ];
 
     public function post()

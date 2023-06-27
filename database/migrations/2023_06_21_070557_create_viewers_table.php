@@ -10,10 +10,10 @@ class CreateViewersTable extends Migration
     {
         Schema::create('viewers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('post_id');
-            $table->unsignedBigInteger('view_count')->default(0);
+            $table->unsignedBigInteger('post_id')->constrained()->cascadeOnDelete()->default(0);;
+            $table->unsignedBigInteger('visitor')->nullable();
             $table->timestamps();
-            $table->foreign('post_id')->references('id')->on('posts');
+
         });
     }
 
