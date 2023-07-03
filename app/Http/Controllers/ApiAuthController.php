@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ApiAuthController extends Controller
 {
@@ -15,27 +16,34 @@ class ApiAuthController extends Controller
     {
         //
         $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:11',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'confirm_password' => 'same:password',
-            'profile_image'=>'nullable',
-        ]);
-        // return $request;
-         $user = User::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'profile_image'=>$request->profile_image,
-            'password' => bcrypt($request->password) ,
-        ]);
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:11',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:8',
+        'confirm_password' => 'same:password',
+        'profile_image' => 'nullable',
+    ]);
 
-         if(Auth::attempt($request->only(['email','password']))){
-            $token = Auth::user()->createToken('phone')->plainTextToken;
-            return response()->json($token);
-        }
-        return response()->json(['message' => 'user not found'],status:403);
+    $user = User::create([
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'email' => $request->email,
+        'profile_image' => $request->profile_image,
+        'password' => bcrypt($request->password),
+    ]);
+
+    $token = $user->createToken('phone')->plainTextToken;
+
+    $data = [
+        'name' => $user->name,
+        'email' => $user->email,
+        'password' => bcrypt($request->password),
+        'phone' => $user->phone,
+        'profile_image' => $user->profile_image,
+        'token' => $token,
+    ];
+
+    return response()->json($data);
     }
 
     /**
@@ -45,20 +53,28 @@ class ApiAuthController extends Controller
     {
 
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:8',
-        ]);
+        'email' => 'required|email',
+        'password' => 'required|string|min:8',
+    ]);
 
-        if(Auth::attempt($request->only(['email','password']))){
-            $token = Auth::user()->createToken('phone')->plainTextToken;
-            return response()->json([
-                'user_id' => Auth::id(),
-                'token' => $token,
-                // 'auth' => new UserResource(Auth::user()),
-            ]);
-        }
-         return response()->json(['message' => 'user not found'],status:403);
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'User not found'], 403);
     }
+
+    $token = $user->createToken('phone')->plainTextToken;
+
+    $data = [
+        'email' => $user->email,
+        'token' => $token,
+         'password' => bcrypt($request->password),
+        'success' => true,
+        'message' => 'Successfully logged in',
+    ];
+
+    return response()->json($data);
+}
 
 
     /**

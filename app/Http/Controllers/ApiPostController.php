@@ -32,9 +32,6 @@ class ApiPostController extends Controller
 
     // return response()->json($posts);
 }
-
-
-
     /**
      * Store a newly created resource in storage.
      */
@@ -78,11 +75,6 @@ class ApiPostController extends Controller
     }
 
         }
-
-
-
-
-
 
       // This is something changing
 
