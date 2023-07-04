@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Like;
 use App\Models\Post;
+use App\Models\View;
 use App\Models\PostImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -22,6 +23,8 @@ class ApiPostController extends Controller
         //
 
         $posts = Post::with('images','likes')->get();
+
+        $posts->loadCount('views');
         return PostResource::collection($posts);
 
     // Remove the id and post_id fields from each post
@@ -37,87 +40,87 @@ class ApiPostController extends Controller
      */
     public function store(Request $request)
     {
-          if (Auth::user()->user_role != "admin") {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }else{
-            $request->validate([
-            'title'=>'required|min:3|max:50',
-            'description'=>'required',
-            'like_count'=>'nullable|numeric|min:0',
-            'images'=>'required',
-            'images.*'=>'file|mimes:jpeg,png,'
-
-        ]);
-
-        // return response()->json($request);
-         $post= Post::create([
-                'title'=>$request->title,
-                'description'=>$request->description,
-                'like_count'=>$request->likes,
-        ]);
-
-        if ($request->hasFile('images')) {
-    $images = [];
-    foreach ($request->file('images') as $key => $image) {
-        $newName = uniqid() . '_' . $image->getClientOriginalName();
-        $image->storeAs('public/images/postimg', $newName);
-        $imagePath = 'public/images/postimg/' . $newName; // Path where the image will be stored
-        $images[$key] = new PostImage(['image' => $imagePath]); // Store the image path in the array
-    }
-    // Additional logic to save the images or perform further actions
-        $post->images()->saveMany($images);
-
-}
-    if (isset($post)) {
-        return response()->json(['message' => ' stored successfully'], 200);
-    } else {
-        return response()->json(['message' => ' storage failed'], 500);
+          if (Auth::user()->user_role !== "admin") {
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 
+    $request->validate([
+        'title' => 'required|min:3|max:50',
+        'description' => 'required',
+        'like_count' => 'nullable|numeric|min:0',
+        'images' => 'required',
+        'images.*' => 'file|mimes:jpeg,png',
+    ]);
+
+    $post = Post::create([
+        'title' => $request->title,
+        'description' => $request->description,
+        'like_count' => $request->likes,
+        'view_count' => 0,
+    ]);
+
+    if ($request->hasFile('images')) {
+        $images = [];
+        foreach ($request->file('images') as $key => $image) {
+            $newName = uniqid() . '_' . $image->getClientOriginalName();
+            $image->storeAs('public/images/postimg', $newName);
+            $imagePath = 'public/images/postimg/' . $newName;
+            $images[$key] = new PostImage(['image' => $imagePath]);
         }
 
-      // This is something changing
+        $post->images()->saveMany($images);
+    }
 
-        // return response()->json($request);
+    if ($post) {
+        $visitor = 'visitor_identifier'; // Replace with your logic to generate a visitor identifier
+        $view = View::where('post_id', $post->id)->where('visitor', $visitor)->first();
 
-//          if ($request->hasFile('images')) {
-//             foreach ($request->file('images') as $key => $image) {
-//             $newName = time() . '_' . $key . '.' . $image->getClientOriginalExtension();
-//             $image->storeAs('public', $newName);
+        if (!$view) {
+            View::create([
+                'post_id' => $post->id,
+                'visitor' => $visitor,
+            ]);
+            $post->increment('view_count');
+        }
 
-//                 $post= Post::create([
-//                 'title'=>$request->title,
-//                 'description'=>$request->description,
-//                 'like_count'=>$request->like_count,
-//                 'images'=>$newName,
-//         ]);
-//     }
-// }
-//    return response()->json(['massage'=>'succcessfully'],status:200);
-
+        return response()->json(['message' => 'Stored successfully'], 200);
+    } else {
+        return response()->json(['message' => 'Storage failed'], 500);
+    }
 
 }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-        $post=Post::find($id);
-        if(is_null($post)){
-            return response()->json(['message' => 'post is not found'],status:404);
-        }
+    public function show(string $id, Request $request)
+{
+    $post = Post::with(['images', 'views'])->find($id);
 
-        $post->load('images');
-
-        // return response()->json($post);
-        return new PostResource($post);
-
-//         return response()->json($post);
-
-
+    if (is_null($post)) {
+        return response()->json(['message' => 'Post not found'], 404);
     }
+
+    $visitor = $request->cookie('my_cookie');
+
+    if (!$visitor) {
+        $visitor = 'default_visitor'; // Set a default visitor value if the cookie is not present
+    }
+
+    $view = View::where('post_id', $post->id)->where('visitor', $visitor)->first();
+
+    if (!$view) {
+        View::create([
+            'post_id' => $post->id,
+            'visitor' => $visitor,
+        ]);
+        $post->increment('view_count');
+    }
+
+    $post->loadCount('views');
+
+    return new PostResource($post);
+}
 
     /**
      * Update the specified resource in storage.

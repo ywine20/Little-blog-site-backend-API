@@ -15,10 +15,11 @@ class PostResource extends JsonResource
     public function toArray(Request $request): array
     {
         return[
-                "title"=>$this->title,
-                "description"=>$this->description,
-                "like_count"=>$this->like_count,
-               'images' => $this->images->pluck('image')->toArray(),
+        'title' => $this->title,
+        'description' => $this->description,
+        'like_count' => $this->like_count,
+        'view_count' => $this->views_count, // Add this line to include the view count
+        'images' => $this->images->pluck('image'),
 
         ];
     }

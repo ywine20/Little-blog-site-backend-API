@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Like extends Model
 {
@@ -13,6 +16,7 @@ class Like extends Model
         'post_id',
         'likes',
     ];
+    protected $dateFormat = 'Y-m-d';
 
     public function post()
     {
@@ -22,6 +26,15 @@ class Like extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+     public function toArray()
+    {
+        $array = parent::toArray();
+
+        $array['created_at'] = Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
+        $array['updated_at'] = Carbon::parse($this->updated_at)->format('Y-m-d H:i:s');
+
+        return $array;
     }
 }
 

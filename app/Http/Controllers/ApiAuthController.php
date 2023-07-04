@@ -67,8 +67,8 @@ class ApiAuthController extends Controller
 
     $data = [
         'email' => $user->email,
+        'password' => bcrypt($request->password),
         'token' => $token,
-         'password' => bcrypt($request->password),
         'success' => true,
         'message' => 'Successfully logged in',
     ];

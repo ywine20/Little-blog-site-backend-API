@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\View;
 use App\Models\PostImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,7 @@ class Post extends Model
       'like_count',
       'view_count',
     ];
+ protected $dateFormat = 'Y-m-d';
 
     public function comments()
 {
@@ -29,6 +31,18 @@ class Post extends Model
     {
         return $this->hasMany(Like::class);
     }
+    public function views()
+    {
+        return $this->hasMany(View::class);
+    }
 
+public function toArray()
+    {
+        $array = parent::toArray();
 
+        $array['created_at'] = Carbon::parse($this->created_at)->format('Y-m-d H:i:s');
+        $array['updated_at'] = Carbon::parse($this->updated_at)->format('Y-m-d H:i:s');
+
+        return $array;
+    }
 }
