@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->integer('like_count')->nullable();
-             $table->unsignedInteger('view_count')->default(0);
+            $table->unsignedInteger('view_count')->default(0);
             $table->timestamps();
         });
     }

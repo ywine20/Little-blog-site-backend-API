@@ -103,9 +103,9 @@ class ApiPostController extends Controller
 
     $visitor = $request->cookie('my_cookie');
 
-    if (!$visitor) {
-        $visitor = 'default_visitor'; // Set a default visitor value if the cookie is not present
-    }
+    // if (!$visitor) {
+    //     $visitor = 'default_visitor'; // Set a default visitor value if the cookie is not present
+    // }
 
     $view = View::where('post_id', $post->id)->where('visitor', $visitor)->first();
 
