@@ -1,6 +1,6 @@
 # Blog Site with Laravel
 
-Welcome to my Blog Site built with Laravel! This web application is designed to provide an elegant and user-friendly platform for sharing blog posts. With Laravel, i made development easier, allowing you to focus on creating great content.(there is no UI)
+Welcome to my Blog Site built with Laravel! This web application is designed to provide an elegant and user-friendly platform for sharing blog posts. With Laravel, i made development easier, allowing you to focus on creating great content.(there is no UI only backend)
 
 ## Features
 
