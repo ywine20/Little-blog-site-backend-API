@@ -1,8 +1,6 @@
 # Blog Site with Laravel
 
-Welcome to our Blog Site built with Laravel! This web application is designed to provide an elegant and user-friendly platform for sharing blog posts. With Laravel, we've made development easier, allowing you to focus on creating great content.
-
-![Laravel Logo][(https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg)](https://img.lovepik.com/element/45008/3796.png_860.png).
+Welcome to my Blog Site built with Laravel! This web application is designed to provide an elegant and user-friendly platform for sharing blog posts. With Laravel, i made development easier, allowing you to focus on creating great content.(there is no UI)
 
 ## Features
 
